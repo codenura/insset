@@ -30,6 +30,11 @@
 #include <insset/x86_64.h>
 #include <insset/x86.h>
 
+/*
+ * Agent: Codex
+ * LLM: GPT-6
+ */
+
 bool isInit = false;
 extern void expect(dynvar);
 LLVMArch carch;
@@ -70,7 +75,7 @@ void cinit(LLVMArch arch) {
     isInit = true;
 }
 
-ProcessorResult copy(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult copy(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                      vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -84,7 +89,7 @@ ProcessorResult copy(uintptr_t left, unsigned int loplen, uintptr_t right, int r
     int valLen = 0;
     if (carch == x86_64 || carch == x86) {
         lgr bufr = {0};
-        ValueAddressPair vap = {0, {0, 0}};
+        ValueAddressPair vap = {0};
         vectorGetValue(&simval, 0, &bufr);
         memcpy(&vap, bufr, sizeof(ValueAddressPair));
         valLen = vap.value.length;
@@ -94,13 +99,13 @@ ProcessorResult copy(uintptr_t left, unsigned int loplen, uintptr_t right, int r
             if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
                 x86_64_setupRegister(regs, left, &left, &loplen);
             if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-                x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+                x86_64_setupRegister(regs, right, &right, &roplen);
         } else if (carch == x86) {
             x86_Registers* regs = (x86_Registers*)bufr;
             if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
                 x86_setupRegister(regs, left, &left, &loplen);
             if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-                x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+                x86_setupRegister(regs, right, &right, &roplen);
         }
         if (loplen < roplen)
             return PROC_BUFFER_OVERFLOW;
@@ -129,7 +134,7 @@ ProcessorResult copy(uintptr_t left, unsigned int loplen, uintptr_t right, int r
     return PROC_SUCCESS;
 }
 
-ProcessorResult add(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult add(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                     vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -141,7 +146,7 @@ ProcessorResult add(uintptr_t left, unsigned int loplen, uintptr_t right, int ro
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Perform addition based on operand size
         uint64_t result = 0;
@@ -244,7 +249,7 @@ ProcessorResult add(uintptr_t left, unsigned int loplen, uintptr_t right, int ro
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Perform addition based on operand size
         uint64_t result = 0;
@@ -345,7 +350,7 @@ ProcessorResult add(uintptr_t left, unsigned int loplen, uintptr_t right, int ro
     return PROC_SUCCESS;
 }
 
-ProcessorResult subtract(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult subtract(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                     vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -357,7 +362,7 @@ ProcessorResult subtract(uintptr_t left, unsigned int loplen, uintptr_t right, i
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Perform subtraction based on operand size
         uint64_t result = 0;
@@ -459,7 +464,7 @@ ProcessorResult subtract(uintptr_t left, unsigned int loplen, uintptr_t right, i
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Perform subtraction based on operand size
         uint64_t result = 0;
@@ -559,7 +564,7 @@ ProcessorResult subtract(uintptr_t left, unsigned int loplen, uintptr_t right, i
     return PROC_SUCCESS;
 }
 
-ProcessorResult multiply(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult multiply(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                     vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -571,7 +576,7 @@ ProcessorResult multiply(uintptr_t left, unsigned int loplen, uintptr_t right, i
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Perform multiplication based on operand size
         uint64_t result = 0;
@@ -674,7 +679,7 @@ ProcessorResult multiply(uintptr_t left, unsigned int loplen, uintptr_t right, i
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Perform multiplication based on operand size
         uint64_t result = 0;
@@ -775,7 +780,7 @@ ProcessorResult multiply(uintptr_t left, unsigned int loplen, uintptr_t right, i
     return PROC_SUCCESS;
 }
 
-ProcessorResult divide(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult divide(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                     vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -787,7 +792,7 @@ ProcessorResult divide(uintptr_t left, unsigned int loplen, uintptr_t right, int
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Check for division by zero
         if ((roplen == 1 && *(uint8_t*)right == 0) || (loplen == 1 && *(uint8_t*)left == 0))
@@ -868,7 +873,7 @@ ProcessorResult divide(uintptr_t left, unsigned int loplen, uintptr_t right, int
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Check for division by zero
         if ((roplen == 1 && *(uint8_t*)right == 0) || (loplen == 1 && *(uint8_t*)left == 0))
@@ -947,7 +952,7 @@ ProcessorResult divide(uintptr_t left, unsigned int loplen, uintptr_t right, int
     return PROC_SUCCESS;
 }
 
-ProcessorResult compare(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult compare(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                         vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -959,7 +964,7 @@ ProcessorResult compare(uintptr_t left, unsigned int loplen, uintptr_t right, in
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Perform comparison based on operand size (subtraction without storing result)
         uint64_t result = 0;
@@ -1057,7 +1062,7 @@ ProcessorResult compare(uintptr_t left, unsigned int loplen, uintptr_t right, in
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Perform comparison based on operand size (subtraction without storing result)
         uint64_t result = 0;
@@ -1503,7 +1508,7 @@ ProcessorResult decrement(uintptr_t left, unsigned int loplen) {
     return PROC_SUCCESS;
 }
 
-ProcessorResult lgAnd(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult lgAnd(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                            vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -1515,7 +1520,7 @@ ProcessorResult lgAnd(uintptr_t left, unsigned int loplen, uintptr_t right, int 
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Perform AND based on operand size
         uint64_t result = 0;
@@ -1582,7 +1587,7 @@ ProcessorResult lgAnd(uintptr_t left, unsigned int loplen, uintptr_t right, int 
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Perform AND based on operand size
         uint64_t result = 0;
@@ -1647,7 +1652,7 @@ ProcessorResult lgAnd(uintptr_t left, unsigned int loplen, uintptr_t right, int 
     return PROC_SUCCESS;
 }
 
-ProcessorResult lgOr(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult lgOr(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                           vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -1659,7 +1664,7 @@ ProcessorResult lgOr(uintptr_t left, unsigned int loplen, uintptr_t right, int r
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Perform OR based on operand size
         uint64_t result = 0;
@@ -1726,7 +1731,7 @@ ProcessorResult lgOr(uintptr_t left, unsigned int loplen, uintptr_t right, int r
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Perform OR based on operand size
         uint64_t result = 0;
@@ -1791,7 +1796,7 @@ ProcessorResult lgOr(uintptr_t left, unsigned int loplen, uintptr_t right, int r
     return PROC_SUCCESS;
 }
 
-ProcessorResult lgXor(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult lgXor(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                            vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -1803,7 +1808,7 @@ ProcessorResult lgXor(uintptr_t left, unsigned int loplen, uintptr_t right, int 
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Perform XOR based on operand size
         uint64_t result = 0;
@@ -1870,7 +1875,7 @@ ProcessorResult lgXor(uintptr_t left, unsigned int loplen, uintptr_t right, int 
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Perform XOR based on operand size
         uint64_t result = 0;
@@ -1935,7 +1940,7 @@ ProcessorResult lgXor(uintptr_t left, unsigned int loplen, uintptr_t right, int 
     return PROC_SUCCESS;
 }
 
-ProcessorResult lgNot(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult lgNot(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                            vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -2067,7 +2072,7 @@ ProcessorResult lgNot(uintptr_t left, unsigned int loplen, uintptr_t right, int 
     return PROC_SUCCESS;
 }
 
-ProcessorResult shift_left(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen) {
+ProcessorResult shift_left(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen) {
     if (!isInit)
         return NOT_INITIALIZED;
     
@@ -2078,7 +2083,7 @@ ProcessorResult shift_left(uintptr_t left, unsigned int loplen, uintptr_t right,
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Get shift count (mask to operand size)
         uint64_t shift_count = 0;
@@ -2194,7 +2199,7 @@ ProcessorResult shift_left(uintptr_t left, unsigned int loplen, uintptr_t right,
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Get shift count (mask to operand size)
         uint64_t shift_count = 0;
@@ -2271,10 +2276,9 @@ ProcessorResult shift_left(uintptr_t left, unsigned int loplen, uintptr_t right,
             regs->eflags |= 0x80;
         
         // Carry Flag (CF) - last bit shifted out
-        if (shift_count > 0 && shift_count <= loplen * 8) {
+        if (shift_count > 0 && shift_count <= loplen * 8)
             if ((dest_val >> (loplen * 8 - shift_count)) & 1)
                 regs->eflags |= 0x1;
-        }
         
         // Overflow Flag (OF) - only defined for single-bit shifts
         if (shift_count == 1) {
@@ -2308,7 +2312,7 @@ ProcessorResult shift_left(uintptr_t left, unsigned int loplen, uintptr_t right,
     return PROC_SUCCESS;
 }
 
-ProcessorResult shift_right(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen) {
+ProcessorResult shift_right(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen) {
     if (!isInit)
         return NOT_INITIALIZED;
     
@@ -2319,7 +2323,7 @@ ProcessorResult shift_right(uintptr_t left, unsigned int loplen, uintptr_t right
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Get shift count (mask to operand size)
         uint64_t shift_count = 0;
@@ -2421,10 +2425,9 @@ ProcessorResult shift_right(uintptr_t left, unsigned int loplen, uintptr_t right
         // Parity Flag (PF) - only for low 8 bits
         uint8_t low_byte = result & 0xFF;
         int parity = 0;
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++)
             if (low_byte & (1 << i))
                 parity++;
-        }
         if (parity % 2 == 0)
             regs->rflags |= 0x4;
     }
@@ -2435,7 +2438,7 @@ ProcessorResult shift_right(uintptr_t left, unsigned int loplen, uintptr_t right
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Get shift count (mask to operand size)
         uint64_t shift_count = 0;
@@ -2512,10 +2515,9 @@ ProcessorResult shift_right(uintptr_t left, unsigned int loplen, uintptr_t right
             regs->eflags |= 0x80;
         
         // Carry Flag (CF) - last bit shifted out
-        if (shift_count > 0 && shift_count <= loplen * 8) {
+        if (shift_count > 0 && shift_count <= loplen * 8)
             if ((dest_val >> (shift_count - 1)) & 1)
                 regs->eflags |= 0x1;
-        }
         
         // Overflow Flag (OF) - only defined for single-bit shifts
         if (shift_count == 1) {
@@ -2674,7 +2676,7 @@ ProcessorResult pop(uintptr_t left, unsigned int loplen) {
     return PROC_SUCCESS;
 }
 
-ProcessorResult load_effective_address(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen) {
+ProcessorResult load_effective_address(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen) {
     if (!isInit)
         return NOT_INITIALIZED;
     
@@ -2714,7 +2716,7 @@ ProcessorResult load_effective_address(uintptr_t left, unsigned int loplen, uint
     return PROC_SUCCESS;
 }
 
-ProcessorResult test_and(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+ProcessorResult test_and(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                          vector eops, vector eopslen) {
     if (!isInit)
         return NOT_INITIALIZED;
@@ -2726,7 +2728,7 @@ ProcessorResult test_and(uintptr_t left, unsigned int loplen, uintptr_t right, i
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
             x86_64_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_64_Registers)))
-            x86_64_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_64_setupRegister(regs, right, &right, &roplen);
         
         // Perform AND operation but don't store result (TEST instruction)
         uint64_t result = 0;
@@ -2789,7 +2791,7 @@ ProcessorResult test_and(uintptr_t left, unsigned int loplen, uintptr_t right, i
         if (left >= (uintptr_t)registers && left <= ((uintptr_t)registers + sizeof(x86_Registers)))
             x86_setupRegister(regs, left, &left, &loplen);
         if (right >= (uintptr_t)registers && right <= ((uintptr_t)registers + sizeof(x86_Registers)))
-            x86_setupRegister(regs, right, &right, (unsigned int*)&roplen);
+            x86_setupRegister(regs, right, &right, &roplen);
 
         // Perform AND operation but don't store result (TEST instruction)
         uint64_t result = 0;

@@ -93,6 +93,8 @@ static vector cachedCalcs;
 static int ccLockout = -1;
 static int simvalLockout = -1;
 
+static vector analyzeCode(std::vector<AST*> nodes);
+
 extern "C" {
     vector simval;
     vector memRegions;
@@ -937,6 +939,16 @@ extern "C" {
                 size = 1; // Skip one byte if disassembly fails
         }
 
+        /* 'simval' Variable will be erased after full simulation and analyze of compiled software */
+        // vectorDeleteAll(&simval);
+        vector reslt = analyzeCode(nodes);
+        return reslt;
+    }
+}
+
+static vector analyzeCode(std::vector<AST*> nodes) {
+    vector result;
+    // AST Interpretation logic separated from analyzeFunction
         for (AST* node : nodes) {
             if (auto instrNode = dynamic_cast<InstructionNode*>(node)) {
                 if ((instrNode->ioperator == ADD || instrNode->ioperator == SUB ||
@@ -1032,11 +1044,5 @@ extern "C" {
             delete instrNode;
         }
 
-        /*
-         * Agent: GitHub Copilot
-         * LLM: GPT-5.6 Luna
-         */
-        vectorDeleteAll(&simval);
         return result;
-    }
 }

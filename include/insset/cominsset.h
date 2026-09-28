@@ -206,34 +206,34 @@ extern uintptr_t registers;
 extern int reglen;
 
 extern void cinit(LLVMArch arch);
-extern ProcessorResult copy(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult copy(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                             vector eops, vector eopslen);
-extern ProcessorResult add(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult add(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                     vector eops, vector eopslen);
-extern ProcessorResult subtract(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult subtract(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                     vector eops, vector eopslen);
-extern ProcessorResult multiply(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult multiply(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                     vector eops, vector eopslen);
-extern ProcessorResult divide(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult divide(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                     vector eops, vector eopslen);
-extern ProcessorResult compare(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult compare(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                               vector eops, vector eopslen);
 extern ProcessorResult increment(uintptr_t left, unsigned int loplen);
 extern ProcessorResult decrement(uintptr_t left, unsigned int loplen);
-extern ProcessorResult lgAnd(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult lgAnd(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                             vector eops, vector eopslen);
-extern ProcessorResult lgOr(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult lgOr(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                            vector eops, vector eopslen);
-extern ProcessorResult lgXor(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult lgXor(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                            vector eops, vector eopslen);
-extern ProcessorResult lgNot(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult lgNot(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                            vector eops, vector eopslen);
-extern ProcessorResult shift_left(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen);
-extern ProcessorResult shift_right(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen);
+extern ProcessorResult shift_left(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen);
+extern ProcessorResult shift_right(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen);
 extern ProcessorResult push(uintptr_t left, unsigned int loplen);
 extern ProcessorResult pop(uintptr_t left, unsigned int loplen);
-extern ProcessorResult load_effective_address(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen);
-extern ProcessorResult test_and(uintptr_t left, unsigned int loplen, uintptr_t right, int roplen,
+extern ProcessorResult load_effective_address(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen);
+extern ProcessorResult test_and(uintptr_t left, unsigned int loplen, uintptr_t right, unsigned int roplen,
                                vector eops, vector eopslen);
 #ifdef __cplusplus
 }
