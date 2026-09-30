@@ -152,4 +152,16 @@ typedef struct {
     unsigned short hours, minutes, seconds;
 } cachedCalc;
 
+#ifdef __cplusplus
+static vector analyzeCode(std::vector<AST*> nodes);
+
+extern "C" {
+#endif
+
+extern vector analyzeFunction(dynvar functionName, dynvar source);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
